@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    Y
+    <!-- Gallery -->
+    <section class="container my-5">
+      <h2>Photo Gallery</h2>
+      
+      <!-- Gallery Buttons -->
+      <div class="text-center mb-4">
+        <button class="btn btn-primary mx-2" onclick="filterGallery('all')">All</button>
+        <button class="btn btn-secondary mx-2" onclick="filterGallery('movie1')">Pathaan</button>
+        <button class="btn btn-secondary mx-2" onclick="filterGallery('movie2')">Jawan</button>
+        <button class="btn btn-secondary mx-2" onclick="filterGallery('movie3')">Dunki</button>
+      </div>
+    
+      <div class="container">
+        <div class="row text-center">
+          <div class="col gallery-item movie1">
+            <img src="/statics/SRK1.jpg" class="img-fluid" style="width: 200px; height: 250px; object-fit: cover;" />
+          </div>
+          <div class="col gallery-item movie2">
+            <img src="/statics/SRK2.jpeg" class="img-fluid" style="width: 200px; height: 250px; object-fit: cover;" />
+          </div>
+          <div class="col gallery-item movie3">
+            <img src="/statics/SRK3.jpeg" class="img-fluid" style="width: 200px; height: 250px; object-fit: cover;" />
+          </div>
+          <div class="col gallery-item movie1">
+            <img src="/statics/SRK4.jpeg" class="img-fluid" style="width: 200px; height: 250px; object-fit: cover;" />
+          </div>
+        </div>
+      </div>
+    </section>
+    
+    <script>
+    function filterGallery(category) {
+      const items = document.querySelectorAll('.gallery-item');
+      items.forEach(item => {
+        if (category === 'all' || item.classList.contains(category)) {
+          item.style.display = 'block';
+        } else {
+          item.style.display = 'none';
+        }
+      });
+    }
+    </script> 
+</body>
+</html>

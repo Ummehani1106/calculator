@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Scientific Calculator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #222;
+            color: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .calculator {
+            background: #333;
+            padding: 20px;
+            border-radius: 10px;
+            width: 350px;
+            max-width: 100%;
+        }
+        .calculator select {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            font-size: 16px;
+            border-radius: 5px;
+            border: none;
+        }
+        .display {
+            background: #000;
+            padding: 20px;
+            border-radius: 5px;
+            text-align: right;
+            font-size: 28px;
+            margin-bottom: 10px;
+            overflow-x: auto;
+        }
+        .buttons {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 10px;
+        }
+        button {
+            padding: 20px;
+            font-size: 18px;
+            border: none;
+            border-radius: 5px;
+            background: #555;
+            color: white;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        button:hover {
+            background: #777;
+        }
+        .span-2 {
+            grid-column: span 2;
+        }
+        .history {
+            margin-top: 20px;
+            background: #444;
+            padding: 10px;
+            border-radius: 5px;
+            max-height: 150px;
+            overflow-y: auto;
+        }
+        .history p {
+            margin: 0;
+            padding: 5px;
+            background: #555;
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="calculator">
+    <select id="mode" onchange="switchMode()">
+        <option value="simple">Simple Calculator</option>
+        <option value="scientific" selected>Scientific Calculator</option>
+    </select>
+    <div class="display" id="display">0</div>
+    <div class="buttons" id="buttons">
+        <!-- Buttons will be generated here -->
+    </div>
+    <div class="history" id="history">
+        <h4>History</h4>
+        <div id="historyList"></div>
+        <button onclick="clearHistory()">Clear History</button>
+    </div>
+</div>
+
+<script>
+    let currentInput = '0';
+    let mode = 'scientific';
+    let history = [];
+
+    // Load the sound file
+    const historySound = new Audio('click-sound.mp3'); // Use your sound file
+
+    const simpleButtons = [
+        '7', '8', '9', '/', 'C',
+        '4', '5', '6', '*', 'DEL',
+        '1', '2', '3', '-', '',
+        '0', '.', '=', '+', ''
+    ];
+
+    const scientificButtons = [
+        'sin', 'cos', 'tan', '√', 'C',
+        '7', '8', '9', '/', 'DEL',
+        '4', '5', '6', '*', '^',
+        '1', '2', '3', '-', 'π',
+        '0', '.', '=', '+', 'log'
+    ];
+
+    function updateDisplay() {
+        document.getElementById('display').textContent = currentInput;
+    }
+
+    function switchMode() {
+        mode = document.getElementById('mode').value;
+        generateButtons();
+        clearDisplay();
+    }
+
+    function generateButtons() {
+        const buttonsContainer = document.getElementById('buttons');
+        buttonsContainer.innerHTML = '';
+        const buttonLabels = mode === 'simple' ? simpleButtons : scientificButtons;
+
+        buttonLabels.forEach(label => {
+            if (label !== '') {
+                const button = document.createElement('button');
+                button.textContent = label;
+                button.onclick = () => buttonClick(label);
+                buttonsContainer.appendChild(button);
+            } else {
+                const emptyDiv = document.createElement('div');
+                buttonsContainer.appendChild(emptyDiv);
+            }
+        });
+    }
+
+    function buttonClick(label) {
+        if (label === 'C') {
+            clearDisplay();
+        } else if (label === 'DEL') {
+            currentInput = currentInput.slice(0, -1) || '0';
+            updateDisplay();
+        } else if (label === '=') {
+            calculate();
+        } else if (label === 'sin' || label === 'cos' || label === 'tan' || label === 'log' || label === '√' || label === 'π') {
+            scientificOperation(label);
+        } else if (label === '^') {
+            currentInput += '';
+            updateDisplay();
+        } else {
+            if (currentInput === '0') {
+                currentInput = label;
+            } else {
+                currentInput += label;
+            }
+            updateDisplay();
+        }
+    }
+
+    function clearDisplay() {
+        currentInput = '0';
+        updateDisplay();
+    }
+
+    function calculate() {
+        try {
+            currentInput = eval(currentInput).toString();
+            history.push(currentInput);
+            updateHistory();
+            playHistorySound(); // Play sound on history update
+        } catch {
+            currentInput = 'Error';
+        }
+        updateDisplay();
+    }
+
+    function scientificOperation(op) {
+        try {
+            let value = eval(currentInput);
+            switch (op) {
+                case 'sin':
+                    currentInput = Math.sin(value * Math.PI / 180).toString();
+                    break;
+                case 'cos':
+                    currentInput = Math.cos(value * Math.PI / 180).toString();
+                    break;
+                case 'tan':
+                    currentInput = Math.tan(value * Math.PI / 180).toString();
+                    break;
+                case 'log':
+                    currentInput = Math.log10(value).toString();
+                    break;
+                case '√':
+                    currentInput = Math.sqrt(value).toString();
+                    break;
+                case 'π':
+                    currentInput += Math.PI.toString();
+                    break;
+            }
+        } catch {
+            currentInput = 'Error';
+        }
+        updateDisplay();
+    }
+
+    function updateHistory() {
+        const historyList = document.getElementById('historyList');
+        historyList.innerHTML = '';
+        history.forEach((item, index) => {
+            const historyItem = document.createElement('p');
+            historyItem.textContent = item;
+            historyList.appendChild(historyItem);
+        });
+    }
+
+    function clearHistory() {
+        history = [];
+        updateHistory();
+    }
+
+    function playHistorySound() {
+        historySound.play(); // Play the sound
+    }
+
+    // Keyboard control
+    document.addEventListener('keydown', (event) => {
+        if (event.key >= '0' && event.key <= '9') {
+            buttonClick(event.key);
+        } else if (event.key === 'Enter') {
+            buttonClick('=');
+        } else if (event.key === 'Backspace') {
+            buttonClick('DEL');
+        } else if (['+', '-', '*', '/', '.', '^', '(', ')'].includes(event.key)) {
+            buttonClick(event.key);
+        } else if (event.key === 'c' || event.key === 'C') {
+            buttonClick('C');
+        }
+    });
+
+    // Initialize calculator
+    generateButtons();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fruits list</title>
+</head>
+<body>
+       <h1>ASSINMENT 7</h1>
+       <H2>UMM E HANNI</H2>
+    <BR>
+        <H3> MY FAVOURITE FRUITS </H3>
+
+        <ul id="fruitList"></ul>
+        <input type="text" id="newFruit" placeholder="Add new fruits">
+        <button onclick="addFruit()" >Add Fruit</button> 
+
+        <script>
+          
+  let fruits = ["Mango" , "Watermelon","Strawberry"];
+
+  function displayFruits() {
+      const list = document.getElementById("fruitList");
+      list.innerHTML = ""; // Clear existing items
+
+      for (let i = 0; i < fruits.length; i++) {
+        const li = document.createElement("li");
+        li.textContent = fruits[i];
+        list.appendChild(li);
+      }
+    }
+
+    
+    function addFruit() {
+      const newFruit = document.getElementById("newFruit").value.trim();
+      if (newFruit !== "") {
+        fruits.push(newFruit);     // Add to array
+        displayFruits();           // Re-display all fruits
+        document.getElementById("newFruit").value = ""; // Clear input
+      } else {
+        alert("Please enter a fruit name!");
+      }
+    }
+
+    
+    displayFruits();
+
+
+        </script>
+
+
+
+</body>
+</html>
